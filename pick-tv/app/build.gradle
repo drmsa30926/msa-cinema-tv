@@ -1,0 +1,32 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.msa.picktv'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'com.msa.picktv'
+        minSdk 21
+        targetSdk 34
+        versionCode Integer.parseInt(System.getenv('BUILD_NUM') ?: '1')
+        versionName '1.' + (System.getenv('BUILD_NUM') ?: '1')
+    }
+    signingConfigs {
+        msa {
+            // مفتاح توقيع مؤقت بيتعمل في كل build (مفيش مفاتيح أو باسوردات في الريبو)
+            storeFile file(System.getenv('KS_FILE') ?: '../ci.jks')
+            storePassword System.getenv('KS_PASS') ?: ''
+            keyAlias 'ci'
+            keyPassword System.getenv('KS_PASS') ?: ''
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.msa
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}

@@ -1,0 +1,37 @@
+name: Build MSA Pick TV (اقترحلي)
+
+on:
+  push:
+    branches: [msa-pick-tv]
+    paths: ['pick-tv/**', '.github/workflows/msa-pick-tv.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: '8.7' }
+      - name: Build APK
+        working-directory: pick-tv
+        env: { BUILD_NUM: '${{ github.run_number }}' }
+        run: |
+          export KS_PASS=$(openssl rand -hex 16) KS_FILE=$PWD/ci.jks
+          keytool -genkeypair -keystore ci.jks -alias ci -keyalg RSA -keysize 2048 -validity 10000 -storepass $KS_PASS -keypass $KS_PASS -dname "CN=MSA Pick TV"
+          gradle --no-daemon assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk ../MSA-Pick-TV.apk
+      - name: Publish (pre-release, not Latest)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pick-tv
+          name: اقترحلي TV
+          prerelease: true
+          make_latest: false
+          target_commitish: msa-pick-tv
+          files: MSA-Pick-TV.apk
