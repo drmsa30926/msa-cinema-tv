@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<title>اقترحلي</title>
+<style>
+:root{--bg:#0b1020;--card:#151c30;--card2:#1d2640;--ink:#eef2fb;--muted:#8d97b5;--gold:#e8b84a;--line:#263052}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Segoe UI",Tahoma,sans-serif}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+:focus{outline:none}
+button:focus-visible,.tv button:focus{outline:3px solid #fff;outline-offset:3px}
+.wrap{max-width:1100px;margin:0 auto;padding:18px 16px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.brand{font-weight:800;font-size:26px}.brand span{color:var(--gold)}
+.hint{color:var(--muted);font-size:13px;margin-top:2px}
+.small{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 12px;font-size:13px}
+.moods{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.mood{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 12px;text-align:right;display:flex;gap:10px;align-items:center}
+.mood .e{font-size:30px}
+.mood .n{font-weight:800;font-size:16px}
+.mood .d{color:var(--muted);font-size:12px;margin-top:2px;line-height:1.35}
+.mood.now{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.mood.now .n::after{content:" • دلوقتي";color:var(--gold);font-size:12px;font-weight:600}
+.sec{color:var(--muted);font-size:13px;font-weight:600;margin:18px 4px 8px}
+.status{text-align:center;color:var(--muted);padding:26px 8px;font-size:15px}
+.ctx{color:var(--muted);font-size:14px;margin:4px 0 12px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.c{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.img{aspect-ratio:16/9;background:linear-gradient(135deg,#1d2640,#2a2148);display:flex;align-items:center;justify-content:center;font-size:44px;position:relative}
+.img img{width:100%;height:100%;object-fit:cover;display:block}
+.tag{position:absolute;top:8px;right:8px;background:rgba(11,16,32,.85);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;color:var(--gold)}
+.b{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.t{font-weight:800;font-size:16px;line-height:1.35;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.s{color:var(--muted);font-size:12px;line-height:1.4;max-height:2.9em;overflow:hidden}
+.w{font-size:14px;line-height:1.5;flex:1}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.a{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:9px 10px;font-size:14px;flex:1;white-space:nowrap}
+.a.play{background:var(--gold);color:#1c1405;font-weight:800;flex:2}
+.a.done{opacity:.55}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#000c;padding:10px 18px;border-radius:12px;font-size:14px;display:none;z-index:9}
+.spin{display:inline-block;animation:r 1s linear infinite}@keyframes r{to{transform:rotate(360deg)}}
+@media(min-width:700px){.moods{grid-template-columns:repeat(3,1fr)}}
+.tv .wrap{max-width:1500px;padding:28px 48px}
+.tv .moods{grid-template-columns:repeat(4,1fr);gap:16px}.tv .mood .n{font-size:20px}.tv .mood .d{font-size:14px}.tv .mood .e{font-size:38px}
+.tv .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.tv .t{font-size:21px}.tv .w{font-size:17px}.tv .s{font-size:14px}.tv .a{font-size:18px;padding:12px 10px}.tv .tag{font-size:15px;padding:5px 12px}.tv .ctx{font-size:17px}.tv .small{font-size:16px;padding:9px 16px}
+.grid:has(.c.quran){grid-template-columns:minmax(0,560px)!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div><div class="brand">اقترح<span>لي</span> ✨</div><div class="hint" id="hi"></div></div>
+    <div style="display:flex;gap:8px"><button class="small" id="inst" style="display:none">📲 ثبّت كأيقونة</button><button class="small" id="back" style="display:none">↩ رجوع</button></div></div>
+  <div id="ask">
+    <div class="moods" id="m1"></div>
+    <div class="sec">📚 تعليم ركان — كل يوم درس، وبيكمل من آخر مرة</div>
+    <div class="moods" id="m3"></div>
+    <div class="sec">ولا حاجة على حسب مزاجك…</div>
+    <div class="moods" id="m2"></div>
+  </div>
+  <div id="out"></div>
+</div>
+<audio id="au" preload="none"></audio>
+<div class="toast" id="toast"></div>
+<script>
+const MOODS=[
+ ["morning","☀️","الصبح","لطفي زكريا · الغد · الدحيح · في الحضارة · فيروز"],
+ ["night","🌙","ليل هادي","أم كلثوم · حليم · نجاة · نجوم وموسيقى · تلاوات"],
+ ["nostalgia","📼","حنين","التسعينات · تترات · الريف · رمضان زمان · إذاعة"],
+ ["relax","☕","قهوة وقراءة","سويسرا · مطر · شتاء · ريف · بدون كلام"],
+ ["movies","🎬","سهرة أفلام","ملحمي · توم هانكس · آل باتشينو · روائع"],
+ ["docs","🌍","وثائقيات","حروب · فضاء · طبيعة · تاريخ · معارك"],
+ ["family","👨‍👩‍👦","سهرة العيلة","كرتون مدبلج مصري أو English"],
+ ["sleep","😴","عايز أنام","إذاعة القرآن الكريم من القاهرة"]];
+const AIM=[["happy","😄","فرحان",""],["laugh","😂","عايز أضحك",""],["down","😔","متضايق",""],["thrill","🔥","إثارة",""],["learn","🧠","عايز أتعلم",""],["calm","😌","رايق",""]];
+const TYPE={movie:["🎬","فيلم"],youtube:["▶️","يوتيوب"],podcast:["🎙️","بودكاست"],doc:["🌍","وثائقي"],music:["🎵","مزيكا"],radio:["📻","زمان"],quran:["📖","قرآن"]};
+const $=id=>document.getElementById(id);
+const UA=navigator.userAgent,TV=/Android TV|AFT|BRAVIA|SmartTV|Tizen|Web0S|webOS|GoogleTV|MSAPickTV|\bTV\b/i.test(UA)||new URLSearchParams(location.search).has("tv");
+const ANDROID=/Android/i.test(UA);
+if(TV)document.documentElement.classList.add("tv");
+const h=new Date().getHours();
+const NOW=h>=5&&h<12?"morning":h>=12&&h<15?"relax":h>=15&&h<19?"nostalgia":h>=19&&h<22?"movies":"night";
+$("hi").textContent=(h<12?"صباح الخير":h<18?"مساء الخير":"مساء النور")+" يا محمد — اختار المود وأنا أجهزلك ٦ حاجات";
+function toast(t){const e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",2400)}
+function esc(s){return String(s||"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
+function tile(box,[k,e,n,d]){const b=document.createElement("button");b.className="mood"+(k===NOW?" now":"");b.innerHTML='<span class="e">'+e+'</span><span><div class="n">'+n+'</div>'+(d?'<div class="d">'+d+'</div>':'')+'</span>';b.onclick=()=>run(k);box.appendChild(b);return b}
+MOODS.forEach(m=>tile($("m1"),m));AIM.forEach(m=>tile($("m2"),m));
+[["ar","✏️","ركان — عربي","الحروف · الفتحة · الكسرة · الضمة · المدود"],["en","🔤","Rakan — English","phonics · 3-letter · 4-letter words"]].forEach(([c,e,n,d])=>{const b=tile($("m3"),["c_"+c,e,n,d]);b.onclick=()=>course(c)});
+let last=null,mood=null,shown=[];
+async function run(k){
+  mood=k;$("ask").style.display="none";$("back").style.display="";
+  $("out").innerHTML='<div class="status"><span class="spin">✨</span> بجهزلك…</div>';
+  try{
+    const p=new URLSearchParams({mood:k});
+    const r=await fetch("/api/pick?"+p);const j=await r.json();
+    if(!r.ok||!j.cards||!j.cards.length)throw 0;
+    last=j;shown=j.cards.map(c=>c.title);render();
+  }catch(e){$("out").innerHTML='<div class="status">مقدرتش أجيب ترشيحات دلوقتي 😕<br><br><button class="small" onclick="run(mood)">جرّب تاني</button></div>'}
+}
+function render(){
+  const o=$("out");o.innerHTML="";
+  const top=document.createElement("div");top.className="ctx";top.innerHTML="<span>"+esc(last.ctx)+"</span>";
+  const again=document.createElement("button");again.className="small";again.textContent="🔄 غيّرهم كلهم";again.onclick=()=>run(mood);top.appendChild(again);o.appendChild(top);
+  const g=document.createElement("div");g.className="grid";o.appendChild(g);
+  last.cards.forEach((c,i)=>g.appendChild(card(c,i)));
+  const f=g.querySelector(".play");f&&f.focus();
+}
+function card(c,i){
+  const d=document.createElement("div");d.className="c "+c.type;const[ic,nm]=TYPE[c.type]||["✨",""];
+  const tag=c.tag||ic+" "+nm;
+  d.innerHTML='<div class="img">'+(c.img?'<img loading="lazy" src="'+esc(c.img)+'" onerror="this.remove()">':ic)+'<span class="tag">'+esc(tag)+'</span></div><div class="b"><div class="t">'+esc(c.title)+'</div>'+(c.sub?'<div class="s">'+esc(c.sub)+'</div>':'')+'<div class="w">'+esc(c.why)+'</div><div class="acts"></div></div>';
+  const acts=d.querySelector(".acts");
+  const add=(t,cls,fn)=>{const b=document.createElement("button");b.className="a "+cls;b.textContent=t;b.onclick=fn;acts.appendChild(b);return b};
+  if(c.type==="movie"){
+    if(c.kids){add("▶ مدبلج مصري","play",()=>cinema(c,c.ar||c.title));add("▶ English","",()=>cinema(c,c.title))}
+    else add("▶ في MSA Cinema","play",()=>cinema(c,c.title));
+    if(c.trailer)add("🎞️ تريلر","",()=>openYT(c.trailer));
+  }else if(c.type==="quran"){
+    const b=add("▶ شغّل","play",()=>{const a=$("au");if(a.paused){b.textContent="⏳ بيوصل...";a.src=c.stream+"?t="+Date.now();a.onplaying=()=>b.textContent="⏸ وقّف";a.onerror=()=>{b.textContent="▶ شغّل";toast("الإذاعة مش بترد دلوقتي — جرّب كمان شوية")};a.play().catch(()=>{b.textContent="▶ شغّل"})}else{a.pause();a.removeAttribute("src");a.load();b.textContent="▶ شغّل"}});
+    setTimeout(()=>b.click(),150);
+  }else if(c.type==="music"&&!c.video&&c.list){
+    add("▶ شغّل","play",()=>{fb(c,"open");openMusic(c)});
+  }else{
+    add("▶ شغّل","play",()=>{fb(c,"open");c.vid?openYT(c.vid):window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(c.q||c.title),"_blank")});
+  }
+  if(c.type!=="quran"){
+    const up=add("👍","",()=>{fb(c,"like");up.classList.add("done");toast("حلو — هتعلّم إن ده بيعجبك")});
+    add("👎 غيّره","",()=>swap(c,i,d));
+  }
+  return d;
+}
+function cinema(c,q){fb(c,"open");try{navigator.clipboard.writeText(q)}catch(e){}toast("بفتحه في MSA Cinema…");const e=encodeURIComponent(q);location.href=(ANDROID&&!TV)?"intent://pick?q="+e+"#Intent;scheme=msacinema;package=com.msa.cinema;end":"msacinema://pick?q="+e}
+const YTM="app.morphe.android.apps.youtube.music";
+function openYT(id){if(ANDROID&&!TV)location.href="intent://music.youtube.com/watch?v="+id+"#Intent;scheme=https;package="+YTM+";S.browser_fallback_url="+encodeURIComponent("https://www.youtube.com/watch?v="+id)+";end";else location.href="https://www.youtube.com/watch?v="+id}
+function openMusic(c){const path=c.list?"/watch?list="+c.list:"/watch?v="+c.vid;if(ANDROID&&!TV)location.href="intent://music.youtube.com"+path+"#Intent;scheme=https;package="+YTM+";S.browser_fallback_url="+encodeURIComponent("https://music.youtube.com"+path)+";end";else location.href="https://www.youtube.com"+path}
+function fb(c,verdict){fetch("/api/fb",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({type:c.type,title:c.title,verdict,ctx:last&&last.ctx,src:c.src||""})}).catch(()=>{})}
+async function swap(c,i,el){
+  fb(c,"dislike");el.style.opacity=.5;el.querySelector(".w").textContent="بدوّر على بديل…";
+  try{
+    const p=new URLSearchParams({mood,avoid:shown.join("|")});
+    if(c.slot!=null)p.set("slot",c.slot);else p.set("type",c.type);
+    const j=await(await fetch("/api/pick?"+p)).json();
+    const n=j.cards&&j.cards[0];if(!n)throw 0;
+    shown.push(n.title);last.cards[i]=n;const ne=card(n,i);el.replaceWith(ne);const pb=ne.querySelector(".play");pb&&pb.focus();
+  }catch(e){el.style.opacity=1;el.querySelector(".w").textContent="مقدرتش ألاقي بديل دلوقتي"}
+}
+let crs=null;
+async function course(c,action){
+  mood=null;$("ask").style.display="none";$("back").style.display="";
+  if(!action)$("out").innerHTML='<div class="status"><span class="spin">📚</span> بجهز الدرس…</div>';
+  try{
+    const j=action?await(await fetch("/api/course",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({c,action})})).json():await(await fetch("/api/course?c="+c)).json();
+    crs=j;drawCourse();
+  }catch(e){$("out").innerHTML='<div class="status">مقدرتش أجيب الدرس 😕</div>'}
+}
+function drawCourse(){
+  const j=crs,o=$("out");o.innerHTML="";
+  const pct=Math.round((j.i)/(j.n)*100);
+  const top=document.createElement("div");top.className="ctx";top.innerHTML='<span>'+esc(j.name)+' — الدرس '+(j.i+1)+' من '+j.n+'</span>';o.appendChild(top);
+  const bar=document.createElement("div");bar.style.cssText="height:8px;background:var(--card2);border-radius:9px;margin:-4px 0 14px;overflow:hidden";bar.innerHTML='<div style="height:100%;width:'+pct+'%;background:var(--gold)"></div>';o.appendChild(bar);
+  const h=document.createElement("div");h.style.cssText="font-size:22px;font-weight:800;margin:0 0 12px";h.textContent="📖 درس النهارده: "+j.title;o.appendChild(h);
+  const g=document.createElement("div");g.className="grid";o.appendChild(g);
+  j.videos.forEach((v,k)=>{const c={type:"youtube",tag:k?"✍️ تدريب":"🎬 الشرح",title:v.title,why:k?"تدريب على نفس الدرس":"ابدأ بده",vid:v.vid,img:v.img,lesson:1};g.appendChild(lessonCard(c))});
+  const acts=document.createElement("div");acts.className="acts";acts.style.margin="16px 0";
+  const mk=(t,cls,fn)=>{const b=document.createElement("button");b.className="a "+cls;b.textContent=t;b.onclick=fn;acts.appendChild(b);return b};
+  if(j.nextTitle)mk("✓ خلصنا — الدرس الجاي: "+j.nextTitle,"play",()=>course(j.course,"next"));
+  if(j.i>0)mk("⏮ الدرس اللي فات","",()=>course(j.course,"prev"));
+  mk("🔁 فيديوهات تانية لنفس الدرس","",()=>course(j.course,"reshuffle"));
+  o.appendChild(acts);
+  const note=document.createElement("div");note.className="hint";note.textContent="لو فتحتوا الدرس النهارده، بكرة هيبدأ لوحده من الدرس اللي بعده.";o.appendChild(note);
+  const f=g.querySelector(".play");f&&f.focus();
+}
+function lessonCard(c){
+  const d=document.createElement("div");d.className="c youtube";
+  d.innerHTML='<div class="img">'+(c.img?'<img loading="lazy" src="'+esc(c.img)+'">':'📚')+'<span class="tag">'+esc(c.tag)+'</span></div><div class="b"><div class="t">'+esc(c.title)+'</div><div class="w">'+esc(c.why)+'</div><div class="acts"></div></div>';
+  const b=document.createElement("button");b.className="a play";b.textContent="▶ شغّل";b.onclick=()=>{fetch("/api/course",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({c:crs.course,action:"open"})}).catch(()=>{});openYT(c.vid)};
+  d.querySelector(".acts").appendChild(b);return d;
+}
+$("back").onclick=()=>{crs=null;$("out").innerHTML="";$("ask").style.display="";$("back").style.display="none";const a=$("au");a.pause();document.querySelector(".mood.now")?.focus()};
+window.__back=()=>{if($("back").style.display===""){$("back").click();return true}return false};
+document.addEventListener("keydown",e=>{
+  const dir={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[e.key];
+  if(!dir){if(e.key==="Backspace"||e.key==="Escape"||e.key==="GoBack"){if(window.__back())e.preventDefault()}return}
+  const all=[...document.querySelectorAll("button")].filter(b=>b.offsetParent);
+  const cur=all.includes(document.activeElement)?document.activeElement:null;
+  if(!cur){e.preventDefault();all[0]&&all[0].focus();return}
+  const r=cur.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let best=null,bd=1e9;
+  for(const b of all){if(b===cur)continue;const q=b.getBoundingClientRect(),x=q.left+q.width/2-cx,y=q.top+q.height/2-cy;const along=x*dir[0]+y*dir[1];if(along<=4)continue;const d=along+Math.abs(x*dir[1]+y*dir[0])*2.5;if(d<bd){bd=d;best=b}}
+  if(best){e.preventDefault();best.focus();best.scrollIntoView({block:"nearest",behavior:"smooth"})}
+});
+document.querySelector(".mood.now")?.focus();
+if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});
+let deferred=null;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;if(!TV)$("inst").style.display=""});
+$("inst").onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;$("inst").style.display="none"};
+</script>
+</body>
+</html>

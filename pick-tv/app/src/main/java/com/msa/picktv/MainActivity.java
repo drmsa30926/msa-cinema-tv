@@ -53,8 +53,22 @@ public class MainActivity extends Activity {
     private boolean route(Uri u) {
         String host = u.getHost() == null ? "" : u.getHost();
         if (host.endsWith("workers.dev")) return false;
+        // يوتيوب يتفتح في SmartTube (من غير إعلانات) لو متسطب، وإلا في أي تطبيق يوتيوب
+        if (host.contains("youtube.com") || host.equals("youtu.be")) {
+            for (String pkg : SMARTTUBE) {
+                try {
+                    Intent i = new Intent(Intent.ACTION_VIEW, u);
+                    i.setPackage(pkg);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    return true;
+                } catch (Exception ignored) { }
+            }
+        }
         try {
-            Intent i = new Intent(Intent.ACTION_VIEW, u);
+            Intent i = "intent".equals(u.getScheme())
+                    ? Intent.parseUri(u.toString(), Intent.URI_INTENT_SCHEME)
+                    : new Intent(Intent.ACTION_VIEW, u);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
         } catch (Exception e) {
@@ -62,6 +76,12 @@ public class MainActivity extends Activity {
         }
         return true;
     }
+
+    private static final String[] SMARTTUBE = {
+            "com.teamsmart.videomanager.tv",      // SmartTube (F-Droid / stable)
+            "com.liskovsoft.smarttubetv.beta",
+            "com.liskovsoft.smarttubetv"
+    };
 
     @Override
     public boolean onKeyDown(int code, KeyEvent e) {
