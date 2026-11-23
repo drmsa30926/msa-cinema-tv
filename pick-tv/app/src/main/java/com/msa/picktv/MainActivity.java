@@ -53,17 +53,9 @@ public class MainActivity extends Activity {
     private boolean route(Uri u) {
         String host = u.getHost() == null ? "" : u.getHost();
         if (host.endsWith("workers.dev")) return false;
-        // يوتيوب يتفتح في SmartTube (من غير إعلانات) لو متسطب، وإلا في أي تطبيق يوتيوب
+        // يوتيوب يتفتح في SmartTube (من غير إعلانات): بندوّر على أي تطبيق بيفتح لينكات يوتيوب غير يوتيوب الأصلي
         if (host.contains("youtube.com") || host.equals("youtu.be")) {
-            for (String pkg : SMARTTUBE) {
-                try {
-                    Intent i = new Intent(Intent.ACTION_VIEW, u);
-                    i.setPackage(pkg);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                    return true;
-                } catch (Exception ignored) { }
-            }
+            if (openInSmartTube(u)) return true;
         }
         try {
             Intent i = "intent".equals(u.getScheme())
@@ -77,10 +69,57 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    private boolean openInSmartTube(Uri u) {
+        android.content.pm.PackageManager pm = getPackageManager();
+        // ١) أي تطبيق مسجّل إنه بيفتح لينكات يوتيوب، ما عدا يوتيوب الأصلي والمتصفحات
+        try {
+            Intent probe = new Intent(Intent.ACTION_VIEW, u);
+            for (android.content.pm.ResolveInfo ri : pm.queryIntentActivities(probe, 0x00020000 /* MATCH_ALL */)) {
+                String p = ri.activityInfo.packageName;
+                if (p.startsWith("com.google.android.youtube") || p.equals(getPackageName()) || isBrowser(p)) continue;
+                Intent i = new Intent(Intent.ACTION_VIEW, u);
+                i.setClassName(p, ri.activityInfo.name);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                return true;
+            }
+        } catch (Exception ignored) { }
+        // ٢) أسماء SmartTube المعروفة، حتى لو مش مسجّل للينكات
+        for (String pkg : SMARTTUBE) {
+            try {
+                pm.getPackageInfo(pkg, 0);
+                Intent i = new Intent(Intent.ACTION_VIEW, u);
+                i.setPackage(pkg);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                return true;
+            } catch (Exception ignored) { }
+        }
+        // ٣) أي تطبيق اسمه فيه smarttube
+        try {
+            for (android.content.pm.ApplicationInfo ai : pm.getInstalledApplications(0)) {
+                String p = ai.packageName.toLowerCase();
+                if (!p.contains("smarttube") && !p.contains("videomanager")) continue;
+                Intent i = new Intent(Intent.ACTION_VIEW, u);
+                i.setPackage(ai.packageName);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                return true;
+            }
+        } catch (Exception ignored) { }
+        return false;
+    }
+
+    private boolean isBrowser(String p) {
+        return p.contains("browser") || p.contains("chrome") || p.contains("tvbro") || p.contains("firefox");
+    }
+
     private static final String[] SMARTTUBE = {
             "com.teamsmart.videomanager.tv",      // SmartTube (F-Droid / stable)
             "com.liskovsoft.smarttubetv.beta",
-            "com.liskovsoft.smarttubetv"
+            "com.liskovsoft.smarttubetv",
+            "org.smarttube.stable",
+            "org.smarttube.beta"
     };
 
     @Override
